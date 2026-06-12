@@ -1,70 +1,115 @@
 let playerScore = 0;
 let computerScore = 0;
+let roundNumber = 1;
+
 const resultDiv = document.getElementById("result");
-const scoreDiv = document.getElementById("score");
+const playerScoreDiv = document.getElementById("player-score");
+const computerScoreDiv = document.getElementById("computer-score");
+const roundNumberDiv = document.getElementById("round-number");
+const historyList = document.getElementById("history");
+const resetButton = document.getElementById("reset");
 const buttons = document.querySelectorAll("#rock, #paper, #scissors");
+
+const emojis = {
+    rock: "🪨",
+    paper: "📄",
+    scissors: "✂️"
+};
 
 function computerChoice() {
     const choices = ["rock", "paper", "scissors"];
     return choices[Math.floor(Math.random() * 3)];
 }
 
-function playRound(playerSelection) {
-    const player = playerSelection.toUpperCase();
-    const computer = computerChoice().toUpperCase();
+function formatChoice(choice) {
+    return choice.charAt(0).toUpperCase() + choice.slice(1);
+}
 
-    let message = `You chose: ${player}<br>Computer chose: ${computer}`;
-    let roundResult = "";
+function playRound(playerSelection) {
+    const player = playerSelection;
+    const computer = computerChoice();
+
+    let message = `You picked ${emojis[player]} ${formatChoice(player)}. Computer picked ${emojis[computer]} ${formatChoice(computer)}.`;
+    let roundResult = "tie";
+    let headline = "A clean tie.";
 
     if (player === computer) {
-        roundResult = `<br>It's a tie!`;
+        headline = "Great minds match.";
     } else if (
-        (player === "ROCK" && computer === "SCISSORS") ||
-        (player === "SCISSORS" && computer === "PAPER") ||
-        (player === "PAPER" && computer === "ROCK")
+        (player === "rock" && computer === "scissors") ||
+        (player === "scissors" && computer === "paper") ||
+        (player === "paper" && computer === "rock")
     ) {
         playerScore++;
-        roundResult = `<br>You win this round! ${player} beats ${computer}.`;
+        roundResult = "win";
+        headline = `${formatChoice(player)} beats ${formatChoice(computer)}. You win the round!`;
     } else {
         computerScore++;
-        roundResult = `<br>You lose this round! ${computer} beats ${player}.`;
+        roundResult = "lose";
+        headline = `${formatChoice(computer)} beats ${formatChoice(player)}. Computer takes it.`;
     }
 
-    resultDiv.innerHTML = message + roundResult;
+    resultDiv.className = `result-panel ${roundResult}`;
+    resultDiv.innerHTML = `<strong>${headline}</strong><span>${message}</span>`;
     updateScoreDisplay();
+    addHistoryItem(roundResult, player, computer);
 
     if (playerScore === 5 || computerScore === 5) {
         declareWinner();
+    } else {
+        roundNumber++;
+        roundNumberDiv.textContent = roundNumber;
     }
 }
 
 function updateScoreDisplay() {
-    scoreDiv.textContent = `Score — You: ${playerScore} | Computer: ${computerScore}`;
+    playerScoreDiv.textContent = playerScore;
+    computerScoreDiv.textContent = computerScore;
+}
+
+function addHistoryItem(roundResult, player, computer) {
+    const item = document.createElement("li");
+    const label = roundResult === "win" ? "Win" : roundResult === "lose" ? "Loss" : "Tie";
+
+    item.className = roundResult;
+    item.textContent = `${label}: ${emojis[player]} ${formatChoice(player)} vs ${emojis[computer]} ${formatChoice(computer)}`;
+    historyList.prepend(item);
 }
 
 function declareWinner() {
     let winnerMessage = playerScore === 5
         ? "🎉 You win the game!"
-        : "😢 Computer wins the game.";
+        : "💫 Computer wins the game.";
 
-    resultDiv.innerHTML += `<br><strong>${winnerMessage}</strong>`;
+    resultDiv.classList.add("game-over");
+    resultDiv.innerHTML += `<span class="final-message">${winnerMessage}</span>`;
     
-    // Disable buttons
     buttons.forEach(button => button.disabled = true);
+    resetButton.classList.add("show");
 }
 
 function playGame() {
     playerScore = 0;
     computerScore = 0;
+    roundNumber = 1;
     resultDiv.textContent = "Choose Rock, Paper, or Scissors!";
+    resultDiv.className = "result-panel";
+    historyList.innerHTML = "";
+    roundNumberDiv.textContent = roundNumber;
+    resetButton.classList.remove("show");
     updateScoreDisplay();
 
     buttons.forEach(button => {
         button.disabled = false;
-        button.addEventListener("click", () => {
-            playRound(button.id);
-        });
     });
 }
+
+buttons.forEach(button => {
+    button.addEventListener("click", () => {
+        playRound(button.id);
+    });
+});
+
+resetButton.addEventListener("click", playGame);
 
 playGame();

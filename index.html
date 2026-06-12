@@ -7,14 +7,51 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Rock Paper Scissors</h1>
-    <div id="game-controls">
-        <button id="rock">Rock</button>
-        <button id="paper">Paper</button>
-        <button id="scissors">Scissors</button>
-    </div>
-    <div id="result">Choose Rock, Paper, or Scissors!</div>
-    <div id="score">Score: 0</div>
+    <main class="game">
+        <section class="hero">
+            <p class="eyebrow">First to 5 wins</p>
+            <h1>Rock Paper Scissors</h1>
+            <p class="intro">Pick your move and try to outsmart the computer.</p>
+        </section>
+
+        <section class="arena" aria-live="polite">
+            <div class="scoreboard">
+                <div class="score-card player-score">
+                    <span>You</span>
+                    <strong id="player-score">0</strong>
+                </div>
+                <div class="round-badge">Round <span id="round-number">1</span></div>
+                <div class="score-card computer-score">
+                    <span>Computer</span>
+                    <strong id="computer-score">0</strong>
+                </div>
+            </div>
+
+            <div id="result" class="result-panel">Choose Rock, Paper, or Scissors!</div>
+
+            <div id="game-controls" class="choices" aria-label="Choose your move">
+                <button id="rock" class="choice-button" type="button">
+                    <span class="choice-icon">🪨</span>
+                    <span>Rock</span>
+                </button>
+                <button id="paper" class="choice-button" type="button">
+                    <span class="choice-icon">📄</span>
+                    <span>Paper</span>
+                </button>
+                <button id="scissors" class="choice-button" type="button">
+                    <span class="choice-icon">✂️</span>
+                    <span>Scissors</span>
+                </button>
+            </div>
+
+            <button id="reset" class="reset-button" type="button">Play again</button>
+        </section>
+
+        <section class="history-panel" aria-labelledby="history-title">
+            <h2 id="history-title">Round history</h2>
+            <ol id="history" class="history-list"></ol>
+        </section>
+    </main>
     <script src="java.js"></script>
 </body>
 </html>
